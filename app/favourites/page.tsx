@@ -8,13 +8,18 @@ async function FavouritesPage() {
   
   // Map rawFavourites to match the PropertyCardProps type.
   const favourites: PropertyCardProps[] = rawFavourites.map((property: any) => ({
-    ...property,
-    image: property.images[0] || '', // using the first image as a default
-    address: '',                      // provide a default value
-    host: '',                         // default value
-    hostemail: '',                    // default value
-    hostlandlinephone: '',            // default value (if needed)
-    hostmobilephone: '',              // default value (if needed)
+    id: property.id,
+    name: property.name,
+    tagline: property.tagline,
+    images: property.images,
+    country: property.country,
+    price: property.price,
+    image: property.images[0] || '', // Using the first image as a default
+    address: '',                     // Default value
+    host: '',                        // Default value
+    hostemail: '',                   // Default value
+    hostlandlinephone: '',           // Default value
+    hostmobilephone: '',             // Default value
   }));
 
   if (favourites.length === 0) {
@@ -25,5 +30,3 @@ async function FavouritesPage() {
 }
 
 export default FavouritesPage;
-
-
