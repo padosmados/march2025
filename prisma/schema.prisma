@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Profile {
+  id           String      @id @default(uuid())
+  clerkId      String      @unique
+  firstName    String
+  lastName     String
+  username     String
+  email        String      @unique
+  profileImage String
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  role         UserRole    @default(USER)
+  phone        String      @unique @default("")
+  bookings     Booking[]
+  favourites   Favourite[]
+  properties   Property[]
+  reviews      Review[]
+}
+
+model Property {
+  id                String      @id @default(uuid())
+  name              String
+  tagline           String
+  category          String
+  images            String[]
+  country           String
+  description       String
+  price             Int
+  beds              Int
+  breakfast         Int
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  privateroom       Int
+  address           String
+  host              String
+  hostemail         String      @unique
+  hostlandlinephone String      @unique
+  hostmobilephone   String      @unique
+  ownerId           String?     // Made optional
+  amenities         String[]
+  bookings          Booking[]
+  favourites        Favourite[]
+  profile           Profile?    @relation(fields: [ownerId], references: [clerkId], onDelete: Cascade)
+  reviews           Review[]
+}
+
+
+model Favourite {
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  profileId  String
+  propertyId String
+  profile    Profile  @relation(fields: [profileId], references: [clerkId], onDelete: Cascade)
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+}
+
+model Review {
+  id         String   @id @default(uuid())
+  profileId  String
+  propertyId String
+  rating     Int
+  comment    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  profile    Profile  @relation(fields: [profileId], references: [clerkId], onDelete: Cascade)
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+}
+
+model Booking {
+  id            String   @id @default(uuid())
+  profileId     String
+  propertyId    String
+  orderTotal    Int
+  totalNights   Int
+  checkIn       DateTime
+  checkOut      DateTime
+  paymentStatus Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  profile       Profile  @relation(fields: [profileId], references: [clerkId], onDelete: Cascade)
+  property      Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+}
+
+enum UserRole {
+  ADMIN
+  USER
+  HOST
+}
